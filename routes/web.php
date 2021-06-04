@@ -1,0 +1,6 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+#LAS RUTAS SE ENCUENTRAN DIVIDIDAS DENTRO DE LA CARPETA myRoutes PARA EL CONTROL DE ACCESO DE USUARIO
+#ESAS RUTAS FUERON ESPECIFICADAS DENTRO DE app/Providers/RouteServiceProvider.php

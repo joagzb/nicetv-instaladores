@@ -1,0 +1,52 @@
+/*
+color del banner superior completo
+*/
+.header-desktop2, .logo{
+    background-color: #011627 !important;
+}
+
+/*
+color que se pinta los tabs cuando se pasa el mouse por encima
+*/
+.navbar__list li a:hover {
+    color: black !important;
+}
+.navbar-sidebar2 .navbar__list li:hover{
+    background-color: #FBE6D4 !important;
+}
+
+/*
+color de texto de pestana seleccionada
+*/
+.navbar-sidebar2 .navbar__list li.active > a{
+    color: white !important;
+}
+
+/*
+color de fondo de pestana seleccionada
+*/
+.navbar-sidebar2 .navbar__list li.active{
+    background-color: orange !important;
+}
+
+
+/*
+estilos del boton logout
+*/
+#boton_logout{
+    background-color: white !important;
+    color: #011627 !important;
+    border: solid 1.5px #011627 !important;
+}
+
+#boton_logout:hover{
+    background-color: #011627 !important;
+    color: white !important;
+}
+
+#boton_logout:focus{
+    background-color: #011627 !important;
+    color: white !important;
+}
+
+

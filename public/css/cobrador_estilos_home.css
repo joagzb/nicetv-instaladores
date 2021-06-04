@@ -1,0 +1,66 @@
+.icon .zmdi{
+    color: black !important;
+}
+
+.tab-title{
+    font-size: 18px;
+}
+
+.click-focus{
+    cursor: pointer;
+}
+
+.parpadea {
+    animation-name: parpadeo;
+    animation-duration: 1s;
+    animation-timing-function: ease;
+    animation-iteration-count: infinite;
+
+    -webkit-animation-name:parpadeo;
+    -webkit-animation-duration: 1s;
+    -webkit-animation-timing-function: ease;
+    -webkit-animation-iteration-count: infinite;
+}
+
+@-moz-keyframes parpadeo{
+    0% { transform:scale(1.1) }
+    50% {  transform:scale(1.0)}
+    100% { transform:scale(1.1)}
+}
+
+@-webkit-keyframes parpadeo {
+    0% { transform:scale(1.1) }
+    50% {  transform:scale(1.0)}
+    100% { transform:scale(1.1)}
+}
+
+@keyframes parpadeo {
+    0% { transform:scale(1.1) }
+    50% {  transform:scale(1.0)}
+    100% { transform:scale(1.1)}
+}
+
+/*
+selector de filtro periodo de resultados
+*/
+.rs-select2--light .select2-container--default .select2-selection--single{
+    outline: solid 1px dimgrey !important;
+    margin-right: 0.2em !important;
+}
+
+/*
+cuadros de informacion estadistica
+*/
+.cuadro_info_color1{
+background-color: #FFA047;
+}
+.cuadro_info_color2{
+    background-color: #FF9029;
+}
+.cuadro_info_color3{
+    background-color: #FF810A;
+}
+.cuadro_info_color4{
+    background-color: #E87000;
+}
+
