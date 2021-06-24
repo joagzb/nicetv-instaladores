@@ -31,7 +31,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="user-data rounded-top uk-border-rounded uk-padding-small">
-                        @if(!\Illuminate\Support\Facades\Auth::user()->userRole()
+                        @if(\Illuminate\Support\Facades\Auth::user()->userRole()
                         ==\App\Models\User::USER_INSTALADOR_TYPE)
                             @if ($detalle_reclamo->idtiporeclamo == 2)
                                 <a href="{{route('showFormActivacion',
@@ -39,7 +39,7 @@
                                 'params'=>$detalle_reclamo->cliente_info])}}"
                                    class="btn btn-outline-success btn-sm float-right">Resolver Instalación</a>
                             @else
-                                <a class="btn btn-outline-success btn-sm float-right "
+                                <a class="btn btn-outline-success btn-sm float-right"
                                    href="#modal-marcarReclamoResuelto"
                                    uk-toggle>Marcar resuelto</a>
                             @endif

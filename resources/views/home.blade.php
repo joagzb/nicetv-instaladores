@@ -9,46 +9,17 @@
 @section('body')
     <div class="container-fluid">
         <section class="section__content section__content--p30">
-                <div class="row uk-margin-top">
-                    <div class="col-12">
-                        @if($habilitado)
+            <div class="row uk-margin-top">
+                <div class="col-12">
+                    @if($habilitado)
                         <div class="user-data rounded-top uk-border-rounded">
                             <ul class="container uk-margin-small uk-flex-center"
                                 uk-tab="animation:uk-animation-fade">
+                                <li><a href="#"><span class="tab-title">Reclamos pendientes</span></a></li>
                                 <li><a href="#"><span class="tab-title"><i class="zmdi zmdi-fire"></i>
                                             Prioridad</span></a></li>
-                                <li><a href="#"><span class="tab-title">Reclamos pendientes</span></a></li>
                             </ul>
                             <ul class="uk-switcher uk-margin">
-                                <li>
-                                    <div class="table-responsive uk-margin-top">
-                                        <table class="table table-sm table-hover table-earning">
-                                            <thead>
-                                            <tr>
-                                                <th>Fecha de reclamo</th>
-                                                <th>Abonado</th>
-                                                <th>Localidad</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            @foreach ($reclamos_prioridad as $reclamo)
-                                                <tr class="click-focus" onclick="window.location='{{ route
-                                                ('showDetalleReclamo',['Arg_idreclamo'=>encrypt($reclamo->id)]) }}'">
-                                                    <td>{{$reclamo->fechareclamo}}</td>
-                                                    <td>{{$reclamo->idabonado}}</td>
-                                                    <td>
-                                                        @if (isset($reclamo->localidad))
-                                                            {{$reclamo->localidad->padre}} - {{$reclamo->localidad->ciudad}}
-                                                        @else
-                                                            no definido
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </li>
                                 <li>
                                     <div class="container-fluid uk-grid-small uk-child-width-1-3@l uk-margin-top uk-margin-bottom"
                                          uk-grid>
@@ -85,7 +56,8 @@
                                                                 id="selector_periodo1"
                                                                 onchange="filtrar_fecha()">
                                                             <option value="0"
-                                                                    selected="selected">Todo</option>
+                                                                    selected="selected">Todo
+                                                            </option>
                                                             <option value="1">Semana</option>
                                                             <option value="2">Mes</option>
                                                             <option value="3">3 Meses</option>
@@ -110,7 +82,8 @@
                                                                 id="selector_localidad"
                                                                 onchange="filtrarDatosLocalidad()">
                                                             <option value="0"
-                                                                    selected="selected">..</option>
+                                                                    selected="selected">..
+                                                            </option>
                                                             <option value="no definido">no definido</option>
                                                             @foreach($localidades as $localidad)
                                                                 <option value="{{$localidad}}">{{$localidad}}</option>
@@ -135,22 +108,47 @@
                                             </thead>
                                             <tbody>
                                             @foreach ($reclamos as $reclamo)
-                                                <tr class="click-focus" onclick="window.location='{{ route
+                                                <tr class="click-focus"
+                                                    onclick="window.location='{{ route
+                                                ('showDetalleReclamo',['Arg_idreclamo'=>encrypt($reclamo->id)]) }}'">
+                                                    <td>{{$reclamo->fechareclamo}}</td>
+                                                    <td>{{$reclamo->idabonado}}</td>
+                                                    <td>
+                                                        {{$reclamo->padre}}
+                                                    </td>
+                                                    <td>
+                                                        {{$reclamo->ciudad}}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="uk-text-center">{{ $reclamos->links() }}</div>
+                                </li>
+
+                                <li>
+                                    <div class="table-responsive uk-margin-top">
+                                        <table class="table table-sm table-hover table-earning">
+                                            <thead>
+                                            <tr>
+                                                <th>Fecha de reclamo</th>
+                                                <th>Abonado</th>
+                                                <th>Localidad</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach ($reclamos_prioridad as $reclamo)
+                                                <tr class="click-focus"
+                                                    onclick="window.location='{{ route
                                                 ('showDetalleReclamo',['Arg_idreclamo'=>encrypt($reclamo->id)]) }}'">
                                                     <td>{{$reclamo->fechareclamo}}</td>
                                                     <td>{{$reclamo->idabonado}}</td>
                                                     <td>
                                                         @if (isset($reclamo->localidad))
-                                                            {{$reclamo->localidad->padre}}
+                                                            {{$reclamo->localidad->padre}} - {{$reclamo->localidad->ciudad}}
                                                         @else
-                                                            no definido
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if (isset($reclamo->localidad))
-                                                            {{$reclamo->localidad->ciudad}}
-                                                        @else
-                                                            no definido
+                                                                                           no definido
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -163,16 +161,16 @@
 
                         </div>
 
-                        @else
-                            <div class="user-data rounded-top uk-border-rounded">
-                                <div class="container uk-padding text-center">
-                                    <h4>Su cuenta no se encuentra habilitada para continuar operando.
-                                        Comuniquese con un administrador y resuelva su situación.</h4>
-                                </div>
+                    @else
+                        <div class="user-data rounded-top uk-border-rounded">
+                            <div class="container uk-padding text-center">
+                                <h4>Su cuenta no se encuentra habilitada para continuar operando.
+                                    Comuniquese con un administrador y resuelva su situación.</h4>
                             </div>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                 </div>
+            </div>
         </section>
     </div>
 @endsection

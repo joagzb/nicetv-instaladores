@@ -91,9 +91,6 @@
 <!-- Main JS-->
 <script src="{{asset('js/main.js')}}"></script>
 
-{{--MIS SCRIPTS--}}
-<script src="{{asset('js/global.js')}}"></script>
-
 <!-- UIKIT -->
 <script src="{{asset('js/uikit.min.js')}}"></script>
 <script src="{{asset('js/uikit-icons.min.js')}}"></script>

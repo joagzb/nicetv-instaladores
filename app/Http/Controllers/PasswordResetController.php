@@ -53,10 +53,9 @@ class PasswordResetController extends Controller
         ]);
         $id = decrypt($idusuario);
 
-        User::where('id', '=', $id)
-          ->update([
-              'password' => Hash::make($request->input('password')),
-          ]);
+        $usuario = User::all()->find($id);
+        $usuario->password = Hash::make($request->input('password'));
+        $usuario->save();
 
         $request->session()->flash('ok', 'Se ha establecido una nueva contraseña con éxito');
 

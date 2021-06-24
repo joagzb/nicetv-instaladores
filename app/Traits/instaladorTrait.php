@@ -34,7 +34,7 @@ trait instaladorTrait
 
     /*
      * obtener los reclamos que un instalador ha guardado
-     * todo: no se si la tabla atencion se va usar
+     * todo: no se si esta tabla se va usar
      * */
     private function getAtenciones($id_instalador)
     {

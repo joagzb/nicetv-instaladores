@@ -11,7 +11,7 @@
             color: floralwhite;
         }
 
-        .click-focus{
+        .click-focus {
             cursor: pointer;
         }
     </style>
@@ -25,122 +25,12 @@
                     <div class="user-data rounded-top uk-border-rounded">
                         <ul class="container uk-margin-small uk-flex-center"
                             uk-tab="animation:uk-animation-fade">
-                            <li><a href="#"><span class="tab-title"><i class="zmdi zmdi-check"></i>
-                                            Resueltos</span></a></li>
                             <li><a href="#"><span class="tab-title"><i class="zmdi zmdi-hourglass-alt"></i>
                                         Pendientes</span></a></li>
+                            <li><a href="#"><span class="tab-title"><i class="zmdi zmdi-check"></i>
+                                            Resueltos</span></a></li>
                         </ul>
                         <ul class="uk-switcher uk-margin">
-
-                            <li>
-                                <div class="container-fluid uk-grid-small uk-child-width-1-2@l uk-margin-bottom"
-                                     uk-grid>
-                                    <div>
-                                        <label for="selector_modo_filtro">Filtrar resultados por:</label>
-                                        <div class="input-group">
-                                            <div class="input-group-btn">
-                                                <div class="btn-group">
-                                                    <button type="button"
-                                                            data-toggle="dropdown"
-                                                            aria-haspopup="true"
-                                                            aria-expanded="false"
-                                                            value="0"
-                                                            id="modo_filtro"
-                                                            class="dropdown-toggle btn
-                                                            btn-outline-secondary">Nro. Abonado
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <input type="text"
-                                                   id="input_filtro"
-                                                   onkeyup="filtrarDatos2()"
-                                                   class="form-control uk-width-1-2">
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div uk-grid>
-                                            <div class="rs-select2--light rs-select2--sm uk-width-expand">
-                                                <label for="selecctor_periodo">Filtrar por localidad:</label>
-                                                <select class="js-select2"
-                                                        id="selector_localidad2"
-                                                        onchange="filtrarDatosLocalidad2()">
-                                                    <option value="0"
-                                                            selected="selected">..
-                                                    </option>
-                                                    <option value="no definido">no definido</option>
-                                                    @foreach($localidades as $localidad)
-                                                        <option value="{{$localidad}}">{{$localidad}}</option>
-                                                    @endforeach
-                                                </select>
-                                                <div class="dropDownSelect2"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <form action="{{route('HistoricRecentToCSV')}}"
-                                          method="post">
-                                        @csrf
-                                        <input type="hidden"
-                                               id="input_selector_periodo_antes"
-                                               value="{{\Carbon\Carbon::now()->subMonth()->toDate()->format('Ymd')}}"
-                                               name="fecha_desde">
-                                        <input type="hidden"
-                                               id="input_selector_periodo_ahora"
-                                               value="{{\Carbon\Carbon::now()->toDate()->format('Ymd')}}"
-                                               name="fecha_hasta">
-                                        <div uk-grid>
-                                            <div class="rs-select2--light rs-select2--sm uk-width-expand">
-                                                <label for="selecctor_periodo">&nbsp;</label>
-                                                <button type="submit"
-                                                        name="modo_exportacion"
-                                                        value="historico"
-                                                        class="btn btn-outline-success btn-block "
-                                                >
-                                                    EXPORTAR ESTA TABLA
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="table-responsive">
-                                    <table class="table table-hover"
-                                           id="myTable1">
-                                        <thead class="dark-table-header text-center uk-text-bolder">
-                                        <tr>
-                                            <th>Fecha de reclamo</th>
-                                            <th>Fecha resuelto</th>
-                                            <th>Abonado</th>
-                                            <th>Localidad</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody class="text-center">
-                                        @foreach ($historial_reclamos as $reclamo)
-                                            <tr class="click-focus" onclick="window.location='{{ route
-                                            ('showHistoricDetalleReclamoAdmin',['idreclamo'=>$reclamo->id_reclamo]) }}'">
-                                                <td>
-                                                    {{$reclamo->fecha_reclamo}}
-                                                </td>
-                                                <td>
-                                                    {{$reclamo->fecha_operacion}}
-                                                </td>
-                                                <td>
-                                                    <div class="table-data__info">
-                                                        <h6>{{$reclamo->cliente_nroabonado}}
-                                                            - {{$reclamo->nombre_apellido_abonado}}
-                                                        </h6>
-                                                        <span>
-                                                <a href="#">motivo: {{$reclamo->motivo}}</a>
-                                            </span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    {{$reclamo->Localidad}}
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </li>
 
                             <li>
                                 <div class="container-fluid uk-grid-small uk-child-width-1-3@l uk-margin-top uk-margin-bottom"
@@ -226,40 +116,145 @@
                                             <th>Abonado</th>
                                             <th>Localidad</th>
                                             <th>Provincia</th>
-                                            <th>Instalador responsable</th>
+                                            {{--<th>Instalador responsable</th>--}}
                                         </tr>
                                         </thead>
                                         <tbody class="text-center">
                                         @foreach ($reclamos as $reclamo)
-                                            <tr class="click-focus" onclick="window.location='{{ route
+                                            <tr class="click-focus"
+                                                onclick="window.location='{{ route
                                             ('showDetalleReclamoAdmin',['idreclamo'=>$reclamo->id]) }}'">
                                                 <td>{{substr($reclamo->fechareclamo,0,10)}}</td>
                                                 <td>{{$reclamo->idabonado}}</td>
                                                 <td>
-                                                    @if (isset($reclamo->localidad))
-                                                        {{$reclamo->localidad->padre}}
-                                                    @else
-                                                        no definido
-                                                    @endif
+                                                    {{$reclamo->padre}}
                                                 </td>
                                                 <td>
-                                                    @if (isset($reclamo->localidad))
-                                                        {{$reclamo->localidad->ciudad}}
-                                                    @else
-                                                        no definido
-                                                    @endif
+                                                    {{$reclamo->ciudad}}
+                                                </td>
+                                                {{--<td>--}}
+                                                {{--<div class="table-data__info">--}}
+                                                {{--<h6>ID: {{$reclamo->idtecnico}}</h6>--}}
+                                                {{--@if($reclamo->tecnico != NULL)--}}
+                                                {{--<p>--}}
+                                                {{--<span>--}}
+                                                {{--{{$reclamo->tecnico->usuario->name}}--}}
+                                                {{--</span>--}}
+                                                {{--</p>--}}
+                                                {{--@endif--}}
+                                                {{--</div>--}}
+                                                {{--</td>--}}
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                    <div class="uk-text-center">{{ $reclamos->links() }}</div>
+                                </div>
+                            </li>
+
+                            <li>
+                                <div class="container-fluid uk-grid-small uk-child-width-1-2@l uk-margin-bottom"
+                                     uk-grid>
+                                    <div>
+                                        <label for="selector_modo_filtro">Filtrar resultados por:</label>
+                                        <div class="input-group">
+                                            <div class="input-group-btn">
+                                                <div class="btn-group">
+                                                    <button type="button"
+                                                            data-toggle="dropdown"
+                                                            aria-haspopup="true"
+                                                            aria-expanded="false"
+                                                            value="0"
+                                                            id="modo_filtro"
+                                                            class="dropdown-toggle btn
+                                                            btn-outline-secondary">Nro. Abonado
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <input type="text"
+                                                   id="input_filtro"
+                                                   onkeyup="filtrarDatos2()"
+                                                   class="form-control uk-width-1-2">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div uk-grid>
+                                            <div class="rs-select2--light rs-select2--sm uk-width-expand">
+                                                <label for="selecctor_periodo">Filtrar por localidad:</label>
+                                                <select class="js-select2"
+                                                        id="selector_localidad2"
+                                                        onchange="filtrarDatosLocalidad2()">
+                                                    <option value="0"
+                                                            selected="selected">..
+                                                    </option>
+                                                    <option value="no definido">no definido</option>
+                                                    @foreach($localidades as $localidad)
+                                                        <option value="{{$localidad}}">{{$localidad}}</option>
+                                                    @endforeach
+                                                </select>
+                                                <div class="dropDownSelect2"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <form action="{{route('HistoricRecentToCSV')}}"
+                                          method="post">
+                                        @csrf
+                                        <input type="hidden"
+                                               id="input_selector_periodo_antes"
+                                               value="{{\Carbon\Carbon::now()->subMonth()->toDate()->format('Ymd')}}"
+                                               name="fecha_desde">
+                                        <input type="hidden"
+                                               id="input_selector_periodo_ahora"
+                                               value="{{\Carbon\Carbon::now()->toDate()->format('Ymd')}}"
+                                               name="fecha_hasta">
+                                        <div uk-grid>
+                                            <div class="rs-select2--light rs-select2--sm uk-width-expand">
+                                                <label for="selecctor_periodo">&nbsp;</label>
+                                                <button type="submit"
+                                                        name="modo_exportacion"
+                                                        value="historico"
+                                                        class="btn btn-outline-success btn-block "
+                                                >
+                                                    EXPORTAR ESTA TABLA
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover"
+                                           id="myTable1">
+                                        <thead class="dark-table-header text-center uk-text-bolder">
+                                        <tr>
+                                            <th>Fecha de reclamo</th>
+                                            <th>Fecha resuelto</th>
+                                            <th>Abonado</th>
+                                            <th>Localidad</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody class="text-center">
+                                        @foreach ($historial_reclamos as $reclamo)
+                                            <tr class="click-focus"
+                                                onclick="window.location='{{ route
+                                            ('showHistoricDetalleReclamoAdmin',['idreclamo'=>$reclamo->id_reclamo]) }}'">
+                                                <td>
+                                                    {{$reclamo->fecha_reclamo}}
+                                                </td>
+                                                <td>
+                                                    {{$reclamo->fecha_operacion}}
                                                 </td>
                                                 <td>
                                                     <div class="table-data__info">
-                                                        <h6>ID: {{$reclamo->idtecnico}}</h6>
-                                                        @if($reclamo->tecnico != NULL)
-                                                            <p>
-                                                                <span>
-                                                                {{$reclamo->tecnico->usuario->name}}
-                                                            </span>
-                                                            </p>
-                                                        @endif
+                                                        <h6>{{$reclamo->cliente_nroabonado}}
+                                                            - {{$reclamo->nombre_apellido_abonado}}
+                                                        </h6>
+                                                        <span>
+                                                <a href="#">motivo: {{$reclamo->motivo}}</a>
+                                            </span>
                                                     </div>
+                                                </td>
+                                                <td>
+                                                    {{$reclamo->Localidad}}
                                                 </td>
                                             </tr>
                                         @endforeach

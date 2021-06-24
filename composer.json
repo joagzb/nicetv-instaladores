@@ -18,7 +18,9 @@
         "laravel/tinker": "^2.5",
         "livewire/livewire": "^2.0",
         "maatwebsite/excel": "^3.1",
-        "wulfheart/pretty_routes": "^0.3.0"
+        "wulfheart/pretty_routes": "^0.3.0",
+        "ext-json": "*",
+        "ext-curl": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

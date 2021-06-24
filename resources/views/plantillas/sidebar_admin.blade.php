@@ -17,28 +17,7 @@
             </form>
         </div>
         <nav class="navbar-sidebar2">
-            <ul class="list-unstyled navbar__list">
-                <li class="active entrada_Adashboard">
-                    <a href="{{route('showHomeAdmin')}}">
-                        <i uk-icon="icon: grid"></i>Panel principal</a>
-                </li>
-                <li class="entrada_AInstaladores">
-                    <a href="{{route('showInstaladores')}}">
-                        <i uk-icon="icon: users"></i>Instaladores</a>
-                </li>
-                <li class="entrada_admins">
-                    <a href="{{route('showAdminList')}}">
-                        <i uk-icon="icon: bolt"></i>Administradores</a>
-                </li>
-                <li class="entrada_APreferencias">
-                    <a href="{{route('userProfileSettings')}}">
-                        <i uk-icon="icon: cog"></i>Preferencias usuario</a>
-                </li>
-                <li class="entrada_ayuda">
-                    <a href="{{route('showAyuda')}}">
-                        <i uk-icon="icon: question"></i>Ayuda</a>
-                </li>
-            </ul>
+            @include('plantillas.sidebar_tabs')
         </nav>
     </div>
 </aside>
@@ -63,28 +42,7 @@
             </form>
         </div>
         <nav class="navbar-sidebar2">
-            <ul class="list-unstyled navbar__list">
-                <li class="entrada_Adashboard">
-                    <a href="{{route('showHomeAdmin')}}">
-                        <i uk-icon="icon: grid"></i>Panel principal</a>
-                </li>
-                <li class="entrada_ACobradores">
-                    <a href="{{route('showInstaladores')}}">
-                        <i uk-icon="icon: users"></i>Instaladores</a>
-                </li>
-                <li class="entrada_AUsers">
-                    <a href="{{route('showAdminList')}}">
-                        <i uk-icon="icon: bolt"></i>Administradores</a>
-                </li>
-                <li class="entrada_APreferencias">
-                    <a href="{{route('userProfileSettings')}}">
-                        <i uk-icon="icon: cog"></i>Preferencias usuario</a>
-                </li>
-                <li class="entrada_APreferencias">
-                    <a href="{{route('showAyuda')}}">
-                        <i uk-icon="icon: question"></i>Ayuda</a>
-                </li>
-            </ul>
+            @include('plantillas.sidebar_tabs')
         </nav>
     </div>
 </aside>

@@ -7,11 +7,13 @@ use App\Models\instalador;
 use App\Traits\clienteTrait;
 use App\Traits\reclamoTrait;
 use Carbon\Carbon;
+use Hamcrest\Text\StringContains;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Throwable;
 
@@ -25,27 +27,21 @@ class HomeInstaladorController extends Controller {
      * VISTA - mostrar pantalla principal con los reclamos pendientes
      * */
     public function index(Request $request){
-        // pintar la navegacion lateral
-        if (!Session::has('tabnav') || Session::get('tabnav') != 1) {
-            Session::put('tabnav', 1);
-        }
-
         $instalador = instalador::getCurrentInstalador();
         if (!$instalador->habilitado()) {
             return view('home', ['habilitado' => false]);
         }
 
         // tomar los reclamos asignados al instalador actual
-        $reclamos_pendientes = $instalador->getCurrentReclamos()
-                                          ->toArray();
-
+        $reclamos_pendientes = $instalador->getCurrentReclamos();
+        
         // filtrar los de mayor prioridad
-        $reclamos_prioritarios = array_filter($reclamos_pendientes, function($elem){
+        $reclamos_prioritarios = array_filter($reclamos_pendientes->items(), function($elem){
             return $elem->prioridad > 0;
         });
 
         //filtrar las localidades para la funcion de filtrar por localidad en el frontend
-        $localidades_reclamos = array_column($reclamos_pendientes, 'localidad');
+        $localidades_reclamos = array_column($reclamos_pendientes->items(), 'localidad');
         $localidades_reclamos = array_column($localidades_reclamos, 'padre');
         $localidades_reclamos = array_unique($localidades_reclamos);
         return view('home', [
@@ -70,7 +66,7 @@ class HomeInstaladorController extends Controller {
             $link_gmaps = 'https://www.google.com/maps/search/?api=1&query=' . $detalle_reclamo->localidad_cliente->latitud . ',' . $detalle_reclamo->localidad_cliente->longuitud . '&zoom=13';
             $detalle_reclamo->link_gmaps = $link_gmaps;
         }
-
+        
         return view('detalle_reclamo', ['detalle_reclamo' => $detalle_reclamo]);
     }
 
@@ -96,71 +92,71 @@ class HomeInstaladorController extends Controller {
             'kid1'          => 'required|string|min:1',
         ]);
 
-        // configurar las variables
-        try {
-            DB::beginTransaction();
-            $idreclamo = decrypt($Arg_idreclamo);
-            $reclamo = $this->getReclamoDetails($idreclamo);
-
-            $kid1 = $request->input('kid1');
-            $kid2 = $request->input('kid2');
-            if (isset($kid2)) {
-                $kid = $kid1 . ',' . $kid2;
-            } else {
-                $kid = $kid1;
-            }
-
-            $params = [
-                'motivo'                  => $reclamo->motivo,
-                'fecha_realizacion'       => Carbon::now()->toDate(),
-                'kid'                     => $kid,
-                'deco1'                   => $reclamo->deco != NULL ? $reclamo->deco : "",
-                'deco2'                   => $reclamo->deco2 != NULL ? $reclamo->deco2 : "",
-                'estado'                  => $reclamo->des_estado,
-                'fecha_reclamo'           => $reclamo->fechareclamo,
-                'localidad'               => $reclamo->localidad_cliente->ciudad . '-' . $reclamo->localidad_cliente->padre,
-                'dni'                     => $request->input('dni'),
-                'email'                   => $request->input('email'),
-                'telefono'                => $request->input('telefono'),
-                'observaciones'           => $request->input('detalle') != NULL ? $request->input('detalle') : "",
-                'tipo_servicio'           => $request->input('tipo_servicio'),
-                'calle'                   => $request->input('calle'),
-                'calle_altura'            => $request->input('casa_nro'),
-                'barrio'                  => $request->input('barrio'),
-                'nroabonado'              => $reclamo->idabonado,
-                'abonado_nombre_apellido' => $reclamo->cliente_info->nombre . ' ' . $reclamo->cliente_info->apellido,
-                'id_reclamo'              => $idreclamo,
-                'id_instalador'           => Auth::user()->id,
-                'nombre_instalador'       => Auth::user()->name,
-            ];
-
-            // escribir datos en la tabla "instalacion"
-            reclamoTrait::resolverInstalacion($params);
-
-            // escribir datos en la tabla "historial"
-            reclamoTrait::recordHistorial($params);
-
-            //marcar reclamo resuleto en billing
-            $this->resolver($idreclamo, $params);
-
-            // resolver instalacion en billing, enviando una activacion temporal
-            $this->enviarActivacion();
-
-            Log::channel('registro_soluciones')
-               ->info('Instalación realizada. reclamo:' . $params['id_reclamo'] . ',motivo:'
-                   . $params['motivo'] . ',abonado:' . $reclamo->idabonado . ',instalador:' . $params['nombre_instalador'] . '/' . $params['id_instalador']);
-            $request->session()->flash('ok', "Se ha resuelto el reclamo.");
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollBack();
-            Log::channel('incidente_soluciones')->info('----INICIO ERROR EN INSTALACION----');
-            Log::channel('incidente_soluciones')->info($e->getMessage());
-            Log::channel('incidente_soluciones')
-               ->info('DETALLES. id_instalador:' . Auth::user()->id . ',id_reclamo:' . $idreclamo);
-            Log::channel('incidente_soluciones')->info($e->getTraceAsString());
-            Log::channel('incidente_soluciones')->info('----FIN ERROR EN INSTALACION----');
-            $request->session()->flash('error', "Ha ocurrido un error. No se ha resuelto la instalación");
-        }
+        // configurar las variables todo: descomentar para actualziar estado en billing
+//        try {
+//            DB::beginTransaction();
+//            $idreclamo = decrypt($Arg_idreclamo);
+//            $reclamo = $this->getReclamoDetails($idreclamo);
+//
+//            $kid1 = $request->input('kid1');
+//            $kid2 = $request->input('kid2');
+//            if (isset($kid2)) {
+//                $kid = $kid1 . ',' . $kid2;
+//            } else {
+//                $kid = $kid1;
+//            }
+//
+//            $params = [
+//                'motivo'                  => $reclamo->motivo,
+//                'fecha_realizacion'       => Carbon::now()->toDate(),
+//                'kid'                     => $kid,
+//                'deco1'                   => $reclamo->deco != NULL ? $reclamo->deco : "",
+//                'deco2'                   => $reclamo->deco2 != NULL ? $reclamo->deco2 : "",
+//                'estado'                  => $reclamo->des_estado,
+//                'fecha_reclamo'           => $reclamo->fechareclamo,
+//                'localidad'               => $reclamo->localidad_cliente->ciudad . '-' . $reclamo->localidad_cliente->padre,
+//                'dni'                     => $request->input('dni'),
+//                'email'                   => $request->input('email'),
+//                'telefono'                => $request->input('telefono'),
+//                'observaciones'           => $request->input('detalle') != NULL ? $request->input('detalle') : "",
+//                'tipo_servicio'           => $request->input('tipo_servicio'),
+//                'calle'                   => $request->input('calle'),
+//                'calle_altura'            => $request->input('casa_nro'),
+//                'barrio'                  => $request->input('barrio'),
+//                'nroabonado'              => $reclamo->idabonado,
+//                'abonado_nombre_apellido' => $reclamo->cliente_info->nombre . ' ' . $reclamo->cliente_info->apellido,
+//                'id_reclamo'              => $idreclamo,
+//                'id_instalador'           => Auth::user()->id,
+//                'nombre_instalador'       => Auth::user()->name,
+//            ];
+//
+//            // escribir datos en la tabla "instalacion"
+//            reclamoTrait::resolverInstalacion($params);
+//
+//            // escribir datos en la tabla "historial"
+//            reclamoTrait::recordHistorial($params);
+//
+//            //marcar reclamo resuleto en billing
+//            $this->resolver($idreclamo, $params);
+//
+//            // resolver instalacion en billing, enviando una activacion temporal
+//            $this->enviarActivacion();
+//
+//            Log::channel('registro_soluciones')
+//               ->info('Instalación realizada. reclamo:' . $params['id_reclamo'] . ',motivo:'
+//                   . $params['motivo'] . ',abonado:' . $reclamo->idabonado . ',instalador:' . $params['nombre_instalador'] . '/' . $params['id_instalador']);
+//            $request->session()->flash('ok', "Se ha resuelto el reclamo.");
+//            DB::commit();
+//        } catch (Throwable $e) {
+//            DB::rollBack();
+//            Log::channel('incidente_soluciones')->info('----INICIO ERROR EN INSTALACION----');
+//            Log::channel('incidente_soluciones')->info($e->getMessage());
+//            Log::channel('incidente_soluciones')
+//               ->info('DETALLES. id_instalador:' . Auth::user()->id . ',id_reclamo:' . $idreclamo);
+//            Log::channel('incidente_soluciones')->info($e->getTraceAsString());
+//            Log::channel('incidente_soluciones')->info('----FIN ERROR EN INSTALACION----');
+//            $request->session()->flash('error', "Ha ocurrido un error. No se ha resuelto la instalación");
+//        }
 
         return redirect()->route('showHome');
     }
@@ -192,52 +188,52 @@ class HomeInstaladorController extends Controller {
             'telefono'       => 'required|numeric|digits_between:8,15',
         ]);
 
-        // configurar las varibales
-        try {
-            DB::beginTransaction();
-            $idreclamo = decrypt($Arg_idreclamo);
-            $reclamo = $this->getReclamoDetails($idreclamo);
-            $params = [
-                'motivo'                  => $reclamo->motivo,
-                'kid'                     => $reclamo->deco . " - " . $reclamo->deco2,
-                'fecha_realizacion'       => Carbon::now()->toDate(),
-                'deco1'                   => $reclamo->deco != NULL ? $reclamo->deco : "",
-                'deco2'                   => $reclamo->deco2 != NULL ? $reclamo->deco2 : "",
-                'estado'                  => $reclamo->des_estado,
-                'fecha_reclamo'           => $reclamo->fechareclamo,
-                'localidad'               => $reclamo->localidad_cliente->ciudad . '-' . $reclamo->localidad_cliente->padre,
-                'dni'                     => trim($request->input('dni')),
-                'email'                   => trim($request->input('email')),
-                'telefono'                => trim($request->input('telefono')),
-                'observaciones'           => trim($request->input('detalle')),
-                'nroabonado'              => $reclamo->idabonado,
-                'abonado'              => $reclamo->cliente_info->nroabonado,
-                'abonado_nombre_apellido' => $reclamo->cliente_info->nombre . ' ' . $reclamo->cliente_info->apellido,
-                'id_reclamo'              => $idreclamo,
-                'id_instalador'           => Auth::user()->id,
-                'nombre_instalador'       => Auth::user()->name,
-            ];
-
-            // escribir datos en la tabla "historial"
-            reclamoTrait::recordHistorial($params);
-
-            //marcar reclamo resuleto en billing
-            $this->resolver($idreclamo, $params);
-
-            Log::channel('registro_soluciones')
-               ->info('Reclamo resuelto. reclamo:' . $params['id_reclamo'] . ',motivo:'. $params['motivo'] . ',abonado:' . $params['abonado'] . ',instalador:' . $params['nombre_instalador'] . '/' . $params['id_instalador']);
-            $request->session()->flash('ok', "Se ha resuelto el reclamo.");
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollBack();
-            Log::channel('incidente_soluciones')->info('----INICIO ERROR EN RECLAMO TECNICO----');
-            Log::channel('incidente_soluciones')->info($e->getMessage());
-            Log::channel('incidente_soluciones')
-               ->info('DETALLES. id_instalador:' . Auth::user()->id . ',id_reclamo:' . $idreclamo);
-            Log::channel('incidente_soluciones')->info($e->getTraceAsString());
-            Log::channel('incidente_soluciones')->info('----FIN ERROR EN RECLAMO TECNICO----');
-            $request->session()->flash('error', "Ha ocurrido un error. No se ha resuelto el reclamo");
-        }
+        // configurar las varibales todo: descomentar para actualziar estado en billing
+//        try {
+//            DB::beginTransaction();
+//            $idreclamo = decrypt($Arg_idreclamo);
+//            $reclamo = $this->getReclamoDetails($idreclamo);
+//            $params = [
+//                'motivo'                  => $reclamo->motivo,
+//                'kid'                     => $reclamo->deco . " - " . $reclamo->deco2,
+//                'fecha_realizacion'       => Carbon::now()->toDate(),
+//                'deco1'                   => $reclamo->deco != NULL ? $reclamo->deco : "",
+//                'deco2'                   => $reclamo->deco2 != NULL ? $reclamo->deco2 : "",
+//                'estado'                  => $reclamo->des_estado,
+//                'fecha_reclamo'           => $reclamo->fechareclamo,
+//                'localidad'               => $reclamo->localidad_cliente->ciudad . '-' . $reclamo->localidad_cliente->padre,
+//                'dni'                     => trim($request->input('dni')),
+//                'email'                   => trim($request->input('email')),
+//                'telefono'                => trim($request->input('telefono')),
+//                'observaciones'           => trim($request->input('detalle')),
+//                'nroabonado'              => $reclamo->idabonado,
+//                'abonado'              => $reclamo->cliente_info->nroabonado,
+//                'abonado_nombre_apellido' => $reclamo->cliente_info->nombre . ' ' . $reclamo->cliente_info->apellido,
+//                'id_reclamo'              => $idreclamo,
+//                'id_instalador'           => Auth::user()->id,
+//                'nombre_instalador'       => Auth::user()->name,
+//            ];
+//
+//            // escribir datos en la tabla "historial"
+//            reclamoTrait::recordHistorial($params);
+//
+//            //marcar reclamo resuleto en billing
+//            $this->resolver($idreclamo, $params);
+//
+//            Log::channel('registro_soluciones')
+//               ->info('Reclamo resuelto. reclamo:' . $params['id_reclamo'] . ',motivo:'. $params['motivo'] . ',abonado:' . $params['abonado'] . ',instalador:' . $params['nombre_instalador'] . '/' . $params['id_instalador']);
+//            $request->session()->flash('ok', "Se ha resuelto el reclamo.");
+//            DB::commit();
+//        } catch (Throwable $e) {
+//            DB::rollBack();
+//            Log::channel('incidente_soluciones')->info('----INICIO ERROR EN RECLAMO TECNICO----');
+//            Log::channel('incidente_soluciones')->info($e->getMessage());
+//            Log::channel('incidente_soluciones')
+//               ->info('DETALLES. id_instalador:' . Auth::user()->id . ',id_reclamo:' . $idreclamo);
+//            Log::channel('incidente_soluciones')->info($e->getTraceAsString());
+//            Log::channel('incidente_soluciones')->info('----FIN ERROR EN RECLAMO TECNICO----');
+//            $request->session()->flash('error', "Ha ocurrido un error. No se ha resuelto el reclamo");
+//        }
 
 
         return redirect()->route('showHome');

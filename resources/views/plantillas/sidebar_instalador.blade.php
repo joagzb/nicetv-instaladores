@@ -17,28 +17,7 @@
             </form>
         </div>
         <nav class="navbar-sidebar2">
-            <ul class="list-inline navbar__list">
-                <li class="entrada_panelPrincipal">
-                    <a href="{{route('showHome')}}">
-                        <i uk-icon="icon: grid"></i>Reclamos Técnicos</a>
-                </li>
-                <li class="entrada_historial">
-                    <a href="{{route('showHistorialVisitas')}}" >
-                        <i uk-icon="icon: history"></i>Reclamos Resueltos</a>
-                </li>
-                <li class="entrada_admins">
-                    <a href="{{route('showAdminList')}}" >
-                        <i uk-icon="icon: bolt"></i>Administradores</a>
-                </li>
-                <li class="entrada_userprofile">
-                    <a href="{{route('userProfileSettings')}}" >
-                        <i uk-icon="icon: cog"></i>Mi cuenta</a>
-                </li>
-                <li class="entrada_ayuda">
-                    <a href="{{route('showAyuda')}}">
-                        <i uk-icon="icon: question"></i>Ayuda</a>
-                </li>
-            </ul>
+            @include('plantillas.sidebar_tabs')
         </nav>
     </div>
 </aside>
@@ -63,87 +42,8 @@
             </form>
         </div>
         <nav class="navbar-sidebar2">
-            <ul class="list-unstyled navbar__list">
-                <li class="entrada_panelPrincipal">
-                    <a href="{{route('showHome')}}">
-                        <i uk-icon="icon: grid"></i>Reclamos Técnicos</a>
-                </li>
-                <li class="entrada_historial">
-                    <a href="{{route('showHistorialVisitas')}}" >
-                        <i uk-icon="icon: history"></i>Reclamos Resueltos</a>
-                </li>
-                <li class="entrada_admins">
-                    <a href="{{route('showAdminList')}}" >
-                        <i uk-icon="icon: bolt"></i>Administradores</a>
-                </li>
-                <li class="entrada_userprofile">
-                    <a href="{{route('userProfileSettings')}}" >
-                        <i uk-icon="icon: cog"></i>Mi cuenta</a>
-                </li>
-                <li class="entrada_cobranzas">
-                    <a href="{{route('showAyuda')}}">
-                        <i uk-icon="icon: question"></i>Ayuda</a>
-                </li>
-            </ul>
+            @include('plantillas.sidebar_tabs')
         </nav>
     </div>
 </aside>
 <!-- END MENU MOBILE-->
-
-<script>
-    // pintar la pestana lateral
-    function pintarTab(tab_indx){
-        // selectores de componentes html
-        let entrada_panelPrincipal = document.querySelectorAll('.entrada_panelPrincipal');
-        let entrada_historial = document.querySelectorAll('.entrada_historial');
-        let entrada_administradores = document.querySelectorAll('.entrada_admins');
-        let entrada_usuarioConfig = document.querySelectorAll('.entrada_userprofile');
-        let entrada_ayuda = document.querySelectorAll('.entrada_ayuda');
-
-        //despintar todo
-        entrada_panelPrincipal.forEach(element => {
-            element.classList.remove('active');
-        });
-        entrada_historial.forEach(element => {
-            element.classList.remove('active');
-        });
-        entrada_administradores.forEach(element => {
-            element.classList.remove('active');
-        });
-        entrada_usuarioConfig.forEach(element => {
-            element.classList.remove('active');
-        });
-        entrada_ayuda.forEach(element => {
-            element.classList.remove('active');
-        });
-
-        // pintar solo el indicado
-        switch (tab_indx) {
-            case 1:
-                entrada_panelPrincipal.forEach(element => {
-                    element.classList.add('active');
-                });
-                break;
-            case 2:
-                entrada_historial.forEach(element => {
-                    element.classList.add('active');
-                });
-                break;
-            case 3:
-                entrada_administradores.forEach(element => {
-                    element.classList.add('active');
-                });
-                break;
-            case 4:
-                entrada_usuarioConfig.forEach(element => {
-                    element.classList.add('active');
-                });
-                break;
-            case 5:
-                entrada_ayuda.forEach(element => {
-                    element.classList.add('active');
-                });
-                break;
-        }
-    }
-</script>

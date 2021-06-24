@@ -18,12 +18,16 @@ class RouteServiceProvider extends ServiceProvider
      */
     static public function redirectTo() {
         $role = Auth::user()->type;
+        $route = '/';
         switch ($role) {
             case 'admin':
-                return '/admin/home';
+                $route = '/admin/home';
+                break;
             case 'instalador':
-                return '/home';
+                $route = '/home';
+                break;
         }
+        return $route;
     }
 
     /**
@@ -33,7 +37,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string|null
      */
-    // protected $namespace = 'App\\Http\\Controllers';
+     protected $namespace = 'App\\Http\\Controllers';
 
     /**
      * Define your route model bindings, pattern filters, etc.
